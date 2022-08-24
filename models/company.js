@@ -66,6 +66,50 @@ class Company {
     return companiesRes.rows;
   }
 
+  static async filter(data){
+//if name, min, max exists => create an array of existing values
+
+// static async update(handle, data) {
+//   const { setCols, values } = sqlForPartialUpdate(
+//       data,
+//       {
+//         numEmployees: "num_employees",
+//         logoUrl: "logo_url",
+//       });
+//   const handleVarIdx = "$" + (values.length + 1);
+
+//   const querySql = `
+//     UPDATE companies
+//     SET ${setCols}
+//       WHERE handle = ${handleVarIdx}
+//       RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`;
+//   const result = await db.query(querySql, [...values, handle]);
+//   const company = result.rows[0];
+
+//   if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+//   return company;
+// }
+
+    const { setCols, values } = sqlForPartialUpdate(
+        data,
+        { numEmployees: "num_employees" }
+        );
+    const handleVarIdx = "$" + (values.length + 1);
+
+    const companiesRes = await db.query(
+      `SELECT handle,
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+         FROM companies
+         WHERE
+         ORDER BY name`,
+         [...arguments]);
+  return companiesRes.rows;
+  }
+
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }

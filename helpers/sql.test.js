@@ -35,6 +35,26 @@ describe("sqlForPartialUpdate", function () {
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
-  })
+  });
+
+  test("doesnt' change JS varaibles to SQL column names", function(){
+    const dataToUpdate = {
+      firstName: "jon",
+      lastName: "snow",
+      email: "jonsnow@got.com"
+    };
+    const jsToSql = {}
+
+    const update = sqlForPartialUpdate(dataToUpdate, jsToSql)
+
+    expect(update).not.toEqual({
+      setCols: '"first_name"=$1, "last_name"=$2, "email"=$3',
+      values: ["jon", "snow", "jonsnow@got.com"]
+    });
+    expect(update).toEqual({
+      setCols: '"firstName"=$1, "lastName"=$2, "email"=$3',
+      values: ["jon", "snow", "jonsnow@got.com"]
+    })
+  });
 
 });
