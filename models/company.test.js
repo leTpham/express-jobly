@@ -89,9 +89,31 @@ describe("findAll", function () {
 
 /************************************** filter */
 
-describe("filter", function () {
+
+/**************test wherebuilder funciton */
+describe("test wherebuilder", function() {
+  test("wherebuilder function works with no parameters", function () {
+    const result = Company.whereBuilder({});
+    expect(result).toEqual({values: [], where: ""})
+  })
+
+
+  test("wherebuilder function works with one parameter", function () {
+    const result = Company.whereBuilder({name: "jonsnow"});
+    expect(result).toEqual({values: ['%jonsnow%'], where: "WHERE name ILIKE $1"})
+  })
+
+  test("wherebuilder function works with two parameter", function () {
+    const result = Company.whereBuilder({name: "jonsnow", minEmployees: 5});
+    expect(result).toEqual({values: ['%jonsnow%', 5], where: "WHERE name ILIKE $1 AND num_employees >= $2"})
+  })
+
+})
+
+describe("findAll with parameters", function () {
   test("works with full company name", async function () {
-    const companies = await Company.filter({ name: "C1" });
+
+    const companies = await Company.findAll({ name: "C1" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -104,7 +126,7 @@ describe("filter", function () {
   });
 
   test("works with portion of company name", async function () {
-    const companies = await Company.filter({ name: "C" });
+    const companies = await Company.findAll({ name: "C" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -131,12 +153,12 @@ describe("filter", function () {
   });
 
   test("works when company with that search does not exist", async function () {
-    const companies = await Company.filter({ name: "a" });
+    const companies = await Company.findAll({ name: "a" });
     expect(companies.length).toEqual(0);
   });
 
   test("works with minEmployees", async function () {
-    const companies = await Company.filter({ minEmployees: 2 });
+    const companies = await Company.findAll({ minEmployees: 2 });
 
     expect(companies).toEqual([
       {
@@ -158,7 +180,7 @@ describe("filter", function () {
   });
 
   test("works with maxEmployees", async function () {
-    const companies = await Company.filter({ maxEmployees: 2 });
+    const companies = await Company.findAll({ maxEmployees: 2 });
 
     expect(companies).toEqual([
       {
@@ -178,6 +200,28 @@ describe("filter", function () {
     ]);
   });
 
+  test("works with both min and maxEmployees", async function () {
+    const companies = await Company.findAll({ minEmployees: 1, maxEmployees: 2 });
+
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      }
+    ]);
+  });
+
+
   test("doesn't work if minEmployees > maxEmployees", async function () {
 
     try {
@@ -188,7 +232,7 @@ describe("filter", function () {
   });
 
   test("works with all filters", async function () {
-    const companies = await Company.filter({
+    const companies = await Company.findAll({
       name: "c",
       minEmployees: 1,
       maxEmployees: 2
@@ -212,6 +256,7 @@ describe("filter", function () {
     ]);
   });
 }
+)
 
 
 /************************************** get */

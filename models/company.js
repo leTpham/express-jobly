@@ -49,66 +49,79 @@ class Company {
     return company;
   }
 
+  static whereBuilder({name, minEmployees, maxEmployees}) {
+    const values = [];
+    const whereStrings = [];
+    let where;
+    if (name) {
+      values.push(`%${name}%`);
+      whereStrings.push(`name ILIKE $${values.length}`)
+    }
+    if(minEmployees) {
+      values.push(minEmployees);
+      whereStrings.push(`num_employees >= $${values.length}`)
+    }
+    if(maxEmployees) {
+      values.push(maxEmployees);
+      whereStrings.push(`num_employees <= $${values.length}`)
+    }
+    if (values.length > 0){
+      where = "WHERE " + whereStrings.join(" AND ")
+    }
+    else {
+      where = "";
+    }
+    return {
+      values,
+      where
+    }
+  }
+
+
   /** Find all companies.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
+  static async findAll(data = {}) {
+    const { values, where } = this.whereBuilder(data)
     const companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+           FROM companies ${where}
+           ORDER BY name`, values);
     return companiesRes.rows;
   }
 
-  static async filter(data){
-//if name, min, max exists => create an array of existing values
+//   static async filter(data){
+// //if name, min, max exists => create an array of existing values
 
-// static async update(handle, data) {
-//   const { setCols, values } = sqlForPartialUpdate(
-//       data,
-//       {
-//         numEmployees: "num_employees",
-//         logoUrl: "logo_url",
-//       });
-//   const handleVarIdx = "$" + (values.length + 1);
+// //data = {name: "C", "minEmployees": 1, "maxEmployees": 3}
 
-//   const querySql = `
-//     UPDATE companies
-//     SET ${setCols}
-//       WHERE handle = ${handleVarIdx}
-//       RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`;
-//   const result = await db.query(querySql, [...values, handle]);
-//   const company = result.rows[0];
+//     // const { setCols, values } = sqlForPartialUpdate(
+//     //     data,
+//     //     { numEmployees: "num_employees" }
+//     //     );
+//     // const handleVarIdx = "$" + (values.length + 1);
 
-//   if (!company) throw new NotFoundError(`No company: ${handle}`);
-
-//   return company;
-// }
-
-    const { setCols, values } = sqlForPartialUpdate(
-        data,
-        { numEmployees: "num_employees" }
-        );
-    const handleVarIdx = "$" + (values.length + 1);
-
-    const companiesRes = await db.query(
-      `SELECT handle,
-              name,
-              description,
-              num_employees AS "numEmployees",
-              logo_url AS "logoUrl"
-         FROM companies
-         WHERE
-         ORDER BY name`,
-         [...arguments]);
-  return companiesRes.rows;
-  }
+//     const companiesRes = await db.query(
+//       `SELECT handle,
+//               name,
+//               description,
+//               num_employees AS "numEmployees",
+//               logo_url AS "logoUrl"
+//          FROM companies
+//          WHERE name LIKE $1 AND
+//                 num_employees BETWEEN $2 AND $3
+//          ORDER BY name`,
+//          [`%${data.name}%` || "",
+//           data.minEmployees || 1,
+//           data.maxEmployees || 10000000]);
+//   return companiesRes.rows;
+//   }
 
   /** Given a company handle, return data about company.
    *
