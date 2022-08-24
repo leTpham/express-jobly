@@ -49,6 +49,9 @@ class Company {
     return company;
   }
 
+  /** constructs where clauses for sql and the value array it corresponds to while
+   * using parameterized queries.
+   */
   static whereBuilder({name, minEmployees, maxEmployees}) {
     const values = [];
     const whereStrings = [];
@@ -65,6 +68,11 @@ class Company {
       values.push(maxEmployees);
       whereStrings.push(`num_employees <= $${values.length}`)
     }
+
+    if(minEmployees && maxEmployees && minEmployees > maxEmployees) {
+      throw new BadRequestError("Min cannot be larger than max.")
+    }
+
     if (values.length > 0){
       where = "WHERE " + whereStrings.join(" AND ")
     }
@@ -96,40 +104,6 @@ class Company {
     return companiesRes.rows;
   }
 
-//   static async filter(data){
-// //if name, min, max exists => create an array of existing values
-
-// //data = {name: "C", "minEmployees": 1, "maxEmployees": 3}
-
-//     // const { setCols, values } = sqlForPartialUpdate(
-//     //     data,
-//     //     { numEmployees: "num_employees" }
-//     //     );
-//     // const handleVarIdx = "$" + (values.length + 1);
-
-//     const companiesRes = await db.query(
-//       `SELECT handle,
-//               name,
-//               description,
-//               num_employees AS "numEmployees",
-//               logo_url AS "logoUrl"
-//          FROM companies
-//          WHERE name LIKE $1 AND
-//                 num_employees BETWEEN $2 AND $3
-//          ORDER BY name`,
-//          [`%${data.name}%` || "",
-//           data.minEmployees || 1,
-//           data.maxEmployees || 10000000]);
-//   return companiesRes.rows;
-//   }
-
-  /** Given a company handle, return data about company.
-   *
-   * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
-   *
-   * Throws NotFoundError if not found.
-   **/
 
   static async get(handle) {
     const companyRes = await db.query(

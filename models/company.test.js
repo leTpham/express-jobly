@@ -225,9 +225,10 @@ describe("findAll with parameters", function () {
   test("doesn't work if minEmployees > maxEmployees", async function () {
 
     try {
-      await Company.filter({ minEmployees: 3, maxEmployees: 2 });
+      await Company.findAll({ minEmployees: 3, maxEmployees: 2 });
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.message).toEqual("Min cannot be larger than max.")
     }
   });
 
