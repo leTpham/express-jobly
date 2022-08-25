@@ -91,7 +91,7 @@ describe("findAll", function () {
 
 describe("findAll with parameters", function () {
   test("works with full company name", async function () {
-    const companies = await Company.findAll({ name: "C1" });
+    const companies = await Company.findAll({ nameLike: "C1" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -104,7 +104,7 @@ describe("findAll with parameters", function () {
   });
 
   test("works with portion of company name", async function () {
-    const companies = await Company.findAll({ name: "C" });
+    const companies = await Company.findAll({ nameLike: "C" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -241,12 +241,12 @@ describe("test wherebuilder", function () {
 
 
   test("wherebuilder function works with one parameter", function () {
-    const result = Company.whereBuilder({ name: "jonsnow" });
+    const result = Company.whereBuilder({ nameLike: "jonsnow" });
     expect(result).toEqual({ values: ['%jonsnow%'], where: "WHERE name ILIKE $1" });
   });
 
   test("wherebuilder function works with two parameter", function () {
-    const result = Company.whereBuilder({ name: "jonsnow", minEmployees: 5 });
+    const result = Company.whereBuilder({ nameLike: "jonsnow", minEmployees: 5 });
     expect(result).toEqual({ values: ['%jonsnow%', 5], where: "WHERE name ILIKE $1 AND num_employees >= $2" });
   });
 
