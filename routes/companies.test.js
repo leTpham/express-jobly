@@ -11,7 +11,9 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  u4Token
 } = require("./_testCommon");
+const { UnauthorizedError } = require("../expressError");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -20,7 +22,7 @@ afterAll(commonAfterAll);
 
 /************************************** POST /companies */
 
-describe("POST /companies", function () {
+describe("POST /companies with token", function () {
   const newCompany = {
     handle: "new",
     name: "New",
@@ -29,11 +31,23 @@ describe("POST /companies", function () {
     numEmployees: 10,
   };
 
-  test("ok for users", async function () {
+  test("error for users that are not admin", async function () {
+    try{
+      const resp = await request(app)
+        .post("/companies")
+        .send(newCompany)
+        .set("authorization", `Bearer ${u1Token}`);
+    } catch (err){
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+
+
+  test("ok for logged in admin", async function () {
     const resp = await request(app)
       .post("/companies")
       .send(newCompany)
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${u4Token}`);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       company: newCompany,
@@ -47,7 +61,7 @@ describe("POST /companies", function () {
         handle: "new",
         numEmployees: 10,
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${u4Token}`);
     expect(resp.statusCode).toEqual(400);
   });
 
@@ -58,8 +72,32 @@ describe("POST /companies", function () {
         ...newCompany,
         logoUrl: "not-a-url",
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${u4Token}`);
     expect(resp.statusCode).toEqual(400);
+  });
+});
+
+describe("POST /companies w/o token", function () {
+  const newCompany = {
+    handle: "new",
+    name: "New",
+    logoUrl: "http://new.img",
+    description: "DescNew",
+    numEmployees: 10,
+  };
+
+  test("fails when logged out", async function () {
+    const response = await request(app)
+        .post(`/companies`)
+        .send(newCompany);
+    expect(response.statusCode).toEqual(401);
+  });
+
+  test("fails with invalid token", async function () {
+    const response = await request(app)
+        .post(`/companies`)
+        .set("authorization", `Bearer invalidToken`);
+    expect(response.statusCode).toEqual(401);
   });
 });
 
@@ -160,12 +198,12 @@ describe("GET /companies", function () {
 
   test("message returned if no name found", async function () {
     const resp = await request(app).get("/companies?nameLike=fakecompany");
-    expect(resp.body.message).toEqual("No company found")
+    expect(resp.body.message).toEqual("No company found");
   });
 
   test("message returned if min is too large", async function () {
     const resp = await request(app).get("/companies?minEmployees=1000000000");
-    expect(resp.body.message).toEqual("No company found")
+    expect(resp.body.message).toEqual("No company found");
   });
 
   test("message returned if max is equal to 0", async function () {
