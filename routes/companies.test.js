@@ -95,8 +95,9 @@ describe("GET /companies", function () {
         ],
     });
   });
+
   test("ok for name params", async function () {
-    const resp = await request(app).get("/companies?name=C1");
+    const resp = await request(app).get("/companies?nameLike=C1");
     expect(resp.body).toEqual({
       companies:
         [
@@ -110,8 +111,9 @@ describe("GET /companies", function () {
         ]
     });
   });
+
   test("ok for name and min params", async function () {
-    const resp = await request(app).get("/companies?name=C&minEmployees=2");
+    const resp = await request(app).get("/companies?nameLike=C&minEmployees=2");
     expect(resp.body).toEqual({
       companies:
         [
@@ -134,7 +136,7 @@ describe("GET /companies", function () {
   });
 
   test("ok for all params", async function () {
-    const resp = await request(app).get("/companies?name=C&minEmployees=2&maxEmployees=3");
+    const resp = await request(app).get("/companies?nameLike=C&minEmployees=2&maxEmployees=3");
     expect(resp.body).toEqual({
       companies:
         [
@@ -157,12 +159,17 @@ describe("GET /companies", function () {
   });
 
   test("message returned if no name found", async function () {
-    const resp = await request(app).get("/companies?name=fakecompany");
+    const resp = await request(app).get("/companies?nameLike=fakecompany");
     expect(resp.body).toEqual({ message: "No company found" });
   });
 
   test("message returned if min is too large", async function () {
     const resp = await request(app).get("/companies?minEmployees=1000000000");
+    expect(resp.body).toEqual({ message: "No company found" });
+  });
+
+  test("message returned if max is equal to 0", async function () {
+    const resp = await request(app).get("/companies?maxEmployees=0");
     expect(resp.body).toEqual({ message: "No company found" });
   });
 
@@ -174,8 +181,6 @@ describe("GET /companies", function () {
   test("error for invalid params", async function () {
     const resp = await request(app).get("/companies?invalidParams=hello");
     expect(resp.statusCode).toEqual(400);
-    // TODO:set resp.message to something we write
-
   });
 
   test("error for min > max params", async function () {

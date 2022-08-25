@@ -52,23 +52,24 @@ class Company {
   /** constructs where clauses for sql and the value array it corresponds to while
    * using parameterized queries.
    */
-  static whereBuilder({name, minEmployees, maxEmployees}) {
+  static whereBuilder({nameLike, minEmployees, maxEmployees}) {
     const values = [];
     const whereStrings = [];
     let where;
-    
-    if (name) {
-      values.push(`%${name}%`);
+
+    if (nameLike) {
+      values.push(`%${nameLike}%`);
       whereStrings.push(`name ILIKE $${values.length}`)
     }
     if(minEmployees) {
       values.push(minEmployees);
       whereStrings.push(`num_employees >= $${values.length}`)
     }
-    if(maxEmployees) {
+    if(maxEmployees || maxEmployees === 0) {
       values.push(maxEmployees);
       whereStrings.push(`num_employees <= $${values.length}`)
     }
+
 
     if(minEmployees && maxEmployees && minEmployees > maxEmployees) {
       throw new BadRequestError("Min cannot be larger than max.")

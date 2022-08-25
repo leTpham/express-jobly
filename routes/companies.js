@@ -54,17 +54,24 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   //if there are params => return companies that match params
   let data = {};
-  // TODO: Make sure that req.query params are valid and throw error if invalid
-  if (req.query) {
-    // const { name : name , minEmployees: Number(minEmployees), maxEmployees: Number(maxEmployees) } = req.query
-    const name = req.query.name;
+  const validProperties = ["nameLike", "minEmployees", "maxEmployees"];
+
+  let queryObject = req.query;
+
+  if (Object.keys(queryObject).length > 0) {
+    if (!(Object.keys(queryObject).every(
+      property => validProperties.includes(property)))) {
+      throw new BadRequestError("Invalid filter parameter.");
+    }
+    const nameLike = req.query.nameLike;
     const minEmployees = Number(req.query.minEmployees);
     const maxEmployees = Number(req.query.maxEmployees);
-    data = { name, minEmployees, maxEmployees };
+    data = { nameLike, minEmployees, maxEmployees };
   }
+
   const companies = await Company.findAll(data);
-  if (companies.length === 0){
-    return res.json({ message: "No company found" })
+  if (companies.length === 0) {
+    return res.json({ message: "No company found" });
   }
   return res.json({ companies });
 });

@@ -87,32 +87,10 @@ describe("findAll", function () {
   });
 });
 
-/************************************** filter */
-
-
-/**************test wherebuilder funciton */
-describe("test wherebuilder", function() {
-  test("wherebuilder function works with no parameters", function () {
-    const result = Company.whereBuilder({});
-    expect(result).toEqual({values: [], where: ""})
-  })
-
-
-  test("wherebuilder function works with one parameter", function () {
-    const result = Company.whereBuilder({name: "jonsnow"});
-    expect(result).toEqual({values: ['%jonsnow%'], where: "WHERE name ILIKE $1"})
-  })
-
-  test("wherebuilder function works with two parameter", function () {
-    const result = Company.whereBuilder({name: "jonsnow", minEmployees: 5});
-    expect(result).toEqual({values: ['%jonsnow%', 5], where: "WHERE name ILIKE $1 AND num_employees >= $2"})
-  })
-
-})
+/************************************** findAll with parameters */
 
 describe("findAll with parameters", function () {
   test("works with full company name", async function () {
-
     const companies = await Company.findAll({ name: "C1" });
     expect(companies).toEqual([
       {
@@ -153,13 +131,12 @@ describe("findAll with parameters", function () {
   });
 
   test("works when company with that search does not exist", async function () {
-    const companies = await Company.findAll({ name: "a" });
+    const companies = await Company.findAll({ nameLike: "a" });
     expect(companies.length).toEqual(0);
   });
 
   test("works with minEmployees", async function () {
     const companies = await Company.findAll({ minEmployees: 2 });
-
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -181,7 +158,6 @@ describe("findAll with parameters", function () {
 
   test("works with maxEmployees", async function () {
     const companies = await Company.findAll({ maxEmployees: 2 });
-
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -202,7 +178,6 @@ describe("findAll with parameters", function () {
 
   test("works with both min and maxEmployees", async function () {
     const companies = await Company.findAll({ minEmployees: 1, maxEmployees: 2 });
-
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -223,12 +198,11 @@ describe("findAll with parameters", function () {
 
 
   test("doesn't work if minEmployees > maxEmployees", async function () {
-
     try {
       await Company.findAll({ minEmployees: 3, maxEmployees: 2 });
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
-      expect(err.message).toEqual("Min cannot be larger than max.")
+      expect(err.message).toEqual("Min cannot be larger than max.");
     }
   });
 
@@ -256,8 +230,27 @@ describe("findAll with parameters", function () {
       }
     ]);
   });
-}
-)
+});
+
+/**************test wherebuilder funciton */
+describe("test wherebuilder", function () {
+  test("wherebuilder function works with no parameters", function () {
+    const result = Company.whereBuilder({});
+    expect(result).toEqual({ values: [], where: "" });
+  });
+
+
+  test("wherebuilder function works with one parameter", function () {
+    const result = Company.whereBuilder({ name: "jonsnow" });
+    expect(result).toEqual({ values: ['%jonsnow%'], where: "WHERE name ILIKE $1" });
+  });
+
+  test("wherebuilder function works with two parameter", function () {
+    const result = Company.whereBuilder({ name: "jonsnow", minEmployees: 5 });
+    expect(result).toEqual({ values: ['%jonsnow%', 5], where: "WHERE name ILIKE $1 AND num_employees >= $2" });
+  });
+
+});
 
 
 /************************************** get */
