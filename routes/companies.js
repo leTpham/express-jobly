@@ -57,8 +57,12 @@ router.get("/", async function (req, res, next) {
   //if there are params => return companies that match params
   let copyQuery = Object.assign({}, req.query);
   console.log("COPY QUERY OG", copyQuery)
-  copyQuery.minEmployees = parseInt(copyQuery.minEmployees) || undefined;
-  copyQuery.maxEmployees = parseInt(copyQuery.maxEmployees) || undefined;
+  if (copyQuery.minEmployees){
+    copyQuery.minEmployees = parseInt(copyQuery.minEmployees)
+  };
+  if (copyQuery.maxEmployees){
+    copyQuery.maxEmployees = parseInt(copyQuery.maxEmployees)
+    };
 console.log("COPY QUERY", copyQuery)
   console.log("MAXEMPLOY", copyQuery.maxEmployees)
 
