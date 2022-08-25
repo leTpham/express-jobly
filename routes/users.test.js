@@ -292,13 +292,16 @@ describe("PATCH /users/:username", () => {
   });
 
   test("not found if no such user", async function () {
-    const resp = await request(app)
+    try {
+      await request(app)
       .patch(`/users/nope`)
       .send({
         firstName: "Nope",
       })
       .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(404);
+    } catch (err) {
+    expect(err instanceof BadRequestError).toBeTruthy();
+    }
   });
 
   test("bad request if invalid data", async function () {
@@ -334,24 +337,45 @@ describe("PATCH /users/:username", () => {
 
 // /************************************** DELETE /users/:username */
 
-// describe("DELETE /users/:username", function () {
-//   test("works for users", async function () {
-//     const resp = await request(app)
-//       .delete(`/users/u1`)
-//       .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.body).toEqual({ deleted: "u1" });
-//   });
+describe("DELETE /users/:username", function () {
+  test("works for users", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({ deleted: "u1" });
+  });
 
-//   test("unauth for anon", async function () {
-//     const resp = await request(app)
-//       .delete(`/users/u1`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
+  test("works for admin", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`)
+      .set("authorization", `Bearer ${u4Token}`);
+    expect(resp.body).toEqual({ deleted: "u1" });
+  });
 
-//   test("not found if user missing", async function () {
-//     const resp = await request(app)
-//       .delete(`/users/nope`)
-//       .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
-// });
+  test("error for different non-admin user", async function () {
+    try {
+    await request(app)
+      .delete(`/users/u2`)
+      .set("authorization", `Bearer ${u1Token}`);
+    } catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+
+
+  test("unauth for anon", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found if user missing", async function () {
+    try {
+      await request(app)
+      .delete(`/users/nope`)
+      .set("authorization", `Bearer ${u1Token}`);
+    } catch (err){
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});
