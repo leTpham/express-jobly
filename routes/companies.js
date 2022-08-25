@@ -11,6 +11,8 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companyFilterSchema = require("../schemas/companyFilter.json");
+
 const { RowDescriptionMessage } = require("pg-protocol/dist/messages");
 
 const router = new express.Router();
@@ -53,28 +55,56 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   //if there are params => return companies that match params
-  let data = {};
-  const validProperties = ["nameLike", "minEmployees", "maxEmployees"];
+  let copyQuery = Object.assign({}, req.query);
+  console.log("COPY QUERY OG", copyQuery)
+  copyQuery.minEmployees = parseInt(copyQuery.minEmployees) || undefined;
+  copyQuery.maxEmployees = parseInt(copyQuery.maxEmployees) || undefined;
+console.log("COPY QUERY", copyQuery)
+  console.log("MAXEMPLOY", copyQuery.maxEmployees)
 
-  let queryObject = req.query;
-
-  if (Object.keys(queryObject).length > 0) {
-    if (!(Object.keys(queryObject).every(
-      property => validProperties.includes(property)))) {
-      throw new BadRequestError("Invalid filter parameter.");
-    }
-    const nameLike = req.query.nameLike;
-    const minEmployees = Number(req.query.minEmployees);
-    const maxEmployees = Number(req.query.maxEmployees);
-    data = { nameLike, minEmployees, maxEmployees };
+  const validator = jsonschema.validate(
+    copyQuery,
+    companyFilterSchema,
+    { required: true }
+  );
+  if (!validator.valid) {
+    const errs = validator.errors.map(e => e.stack);
+    throw new BadRequestError(errs);
   }
 
-  const companies = await Company.findAll(data);
+  const companies = await Company.findAll(copyQuery);
   if (companies.length === 0) {
-    return res.json({ message: "No company found" });
-  }
-  return res.json({ companies });
+        return res.json({ message: "No company found" });
+      }
+      else {
+  return res.status(200).json({ companies });
+      }
 });
+
+
+
+//   let data = {};
+//   const validProperties = ["nameLike", "minEmployees", "maxEmployees"];
+
+//   let queryObject = req.query;
+
+//   if (Object.keys(queryObject).length > 0) {
+//     if (!(Object.keys(queryObject).every(
+//       property => validProperties.includes(property)))) {
+//       throw new BadRequestError("Invalid filter parameter.");
+//     }
+//     const nameLike = req.query.nameLike;
+//     const minEmployees = Number(req.query.minEmployees);
+//     const maxEmployees = Number(req.query.maxEmployees);
+//     data = { nameLike, minEmployees, maxEmployees };
+//   }
+
+//   const companies = await Company.findAll(data);
+//   if (companies.length === 0) {
+//     return res.json({ message: "No company found" });
+//   }
+//   return res.json({ companies });
+// });
 
 /** GET /[handle]  =>  { company }
  *

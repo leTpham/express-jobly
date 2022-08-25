@@ -160,22 +160,22 @@ describe("GET /companies", function () {
 
   test("message returned if no name found", async function () {
     const resp = await request(app).get("/companies?nameLike=fakecompany");
-    expect(resp.body).toEqual({ message: "No company found" });
+    expect(resp.body.message).toEqual("No company found")
   });
 
   test("message returned if min is too large", async function () {
     const resp = await request(app).get("/companies?minEmployees=1000000000");
-    expect(resp.body).toEqual({ message: "No company found" });
+    expect(resp.body.message).toEqual("No company found")
   });
 
   test("message returned if max is equal to 0", async function () {
     const resp = await request(app).get("/companies?maxEmployees=0");
-    expect(resp.body).toEqual({ message: "No company found" });
+    expect(resp.statusCode).toEqual(400);
   });
 
   test("message returned if max is less than 0", async function () {
     const resp = await request(app).get("/companies?maxEmployees=-1");
-    expect(resp.body).toEqual({ message: "No company found" });
+    expect(resp.statusCode).toEqual(400);
   });
 
   test("error for invalid params", async function () {

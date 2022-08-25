@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1661449707368" clover="3.2.0">
-  <project timestamp="1661449707369" name="All files">
+<coverage generated="1661451366552" clover="3.2.0">
+  <project timestamp="1661451366552" name="All files">
     <metrics statements="296" coveredstatements="295" conditionals="86" coveredconditionals="84" methods="52" coveredmethods="51" elements="434" coveredelements="430" complexity="0" loc="296" ncloc="296" packages="5" files="14" classes="14"/>
     <package name="express-jobly">
       <metrics statements="50" coveredstatements="49" conditionals="18" coveredconditionals="16" methods="8" coveredmethods="7"/>
@@ -72,12 +72,12 @@
       <file name="sql.js" path="/Users/lepham/Desktop/sprint/express-jobly/helpers/sql.js">
         <metrics statements="7" coveredstatements="7" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
         <line num="1" count="7" type="stmt"/>
-        <line num="18" count="16" type="stmt"/>
-        <line num="20" count="16" type="cond" truecount="2" falsecount="0"/>
-        <line num="23" count="13" type="stmt"/>
-        <line num="24" count="29" type="cond" truecount="2" falsecount="0"/>
-        <line num="27" count="13" type="stmt"/>
-        <line num="35" count="7" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="21" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="13" type="stmt"/>
+        <line num="25" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="13" type="stmt"/>
+        <line num="36" count="7" type="stmt"/>
       </file>
       <file name="tokens.js" path="/Users/lepham/Desktop/sprint/express-jobly/helpers/tokens.js">
         <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
@@ -107,7 +107,7 @@
         <line num="38" count="32" type="cond" truecount="2" falsecount="0"/>
         <line num="39" count="24" type="stmt"/>
         <line num="41" count="8" type="stmt"/>
-        <line num="46" count="5" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
       </file>
     </package>
     <package name="express-jobly.models">
@@ -137,23 +137,23 @@
         <line num="29" count="12" type="stmt"/>
         <line num="47" count="12" type="stmt"/>
         <line num="49" count="12" type="stmt"/>
-        <line num="56" count="22" type="stmt"/>
-        <line num="57" count="22" type="stmt"/>
-        <line num="60" count="22" type="cond" truecount="2" falsecount="0"/>
-        <line num="61" count="9" type="stmt"/>
-        <line num="62" count="9" type="stmt"/>
-        <line num="64" count="22" type="cond" truecount="2" falsecount="0"/>
-        <line num="65" count="9" type="stmt"/>
-        <line num="66" count="9" type="stmt"/>
-        <line num="68" count="22" type="cond" truecount="4" falsecount="0"/>
+        <line num="56" count="19" type="stmt"/>
+        <line num="57" count="19" type="stmt"/>
+        <line num="60" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="7" type="stmt"/>
+        <line num="62" count="7" type="stmt"/>
+        <line num="64" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="8" type="stmt"/>
+        <line num="66" count="8" type="stmt"/>
+        <line num="68" count="19" type="cond" truecount="4" falsecount="0"/>
         <line num="69" count="8" type="stmt"/>
         <line num="70" count="8" type="stmt"/>
-        <line num="74" count="22" type="cond" truecount="5" falsecount="0"/>
+        <line num="74" count="19" type="cond" truecount="5" falsecount="0"/>
         <line num="75" count="2" type="stmt"/>
-        <line num="78" count="20" type="cond" truecount="2" falsecount="0"/>
-        <line num="79" count="16" type="stmt"/>
-        <line num="82" count="4" type="stmt"/>
-        <line num="84" count="20" type="stmt"/>
+        <line num="78" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="14" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="84" count="17" type="stmt"/>
         <line num="97" count="19" type="stmt"/>
         <line num="98" count="17" type="stmt"/>
         <line num="106" count="16" type="stmt"/>

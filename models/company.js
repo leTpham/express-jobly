@@ -52,7 +52,7 @@ class Company {
   /** constructs where clauses for sql and the value array it corresponds to while
    * using parameterized queries.
    */
-  static whereBuilder({nameLike, minEmployees, maxEmployees}) {
+  static _whereBuilder({nameLike, minEmployees, maxEmployees}) {
     const values = [];
     const whereStrings = [];
     let where;
@@ -94,7 +94,7 @@ class Company {
    * */
 
   static async findAll(data = {}) {
-    const { values, where } = this.whereBuilder(data)
+    const { values, where } = this._whereBuilder(data)
     const companiesRes = await db.query(
         `SELECT handle,
                 name,
