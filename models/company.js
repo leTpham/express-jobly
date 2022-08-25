@@ -56,6 +56,7 @@ class Company {
     const values = [];
     const whereStrings = [];
     let where;
+    
     if (name) {
       values.push(`%${name}%`);
       whereStrings.push(`name ILIKE $${values.length}`)

@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const { RowDescriptionMessage } = require("pg-protocol/dist/messages");
 
 const router = new express.Router();
 
@@ -28,7 +29,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyNewSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -51,10 +52,20 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const companies = await Company.findAll();
-//if there are params => return companies that match params
-  const { name, minEmployees, maxEmployees } = req.query
-
+  //if there are params => return companies that match params
+  let data = {};
+  // TODO: Make sure that req.query params are valid and throw error if invalid
+  if (req.query) {
+    // const { name : name , minEmployees: Number(minEmployees), maxEmployees: Number(maxEmployees) } = req.query
+    const name = req.query.name;
+    const minEmployees = Number(req.query.minEmployees);
+    const maxEmployees = Number(req.query.maxEmployees);
+    data = { name, minEmployees, maxEmployees };
+  }
+  const companies = await Company.findAll(data);
+  if (companies.length === 0){
+    return res.json({ message: "No company found" })
+  }
   return res.json({ companies });
 });
 
@@ -86,7 +97,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyUpdateSchema,
-    {required:true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
