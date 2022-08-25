@@ -166,10 +166,10 @@ describe("GET /companies", function () {
     expect(resp.body).toEqual({ message: "No company found" });
   });
 
-  // test("message returned if max is 0", async function () {
-  //   const resp = await request(app).get("/companies?maxEmployees=0");
-  //   expect(resp.body).toEqual({ message: "No company found" });
-  // });
+  test("message returned if max is less than 0", async function () {
+    const resp = await request(app).get("/companies?maxEmployees=-1");
+    expect(resp.body).toEqual({ message: "No company found" });
+  });
 
   test("error for invalid params", async function () {
     const resp = await request(app).get("/companies?invalidParams=hello");
