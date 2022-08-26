@@ -8,6 +8,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  jobs
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -88,21 +89,26 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let job = await Job.get("c1");
-    expect(job).toEqual({
-      title: "j1",
-      salary: 1,
-      equity: 0.1,
-      companyHandle: "c1"
+    console.log("JOBSS", jobs)
+
+    let getJob = await Job.get(jobs[0].id);
+
+    expect(getJob).toEqual({
+      title: jobs[0].title,
+      salary: jobs[0].salary,
+      equity: jobs[0].equity,
+      companyHandle: jobs[0].company_handle
     });
+
   });
 
   test("not found if no such job", async function () {
     try {
-      await Job.get("nope");
+      await Job.get(0);
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
 });
+
