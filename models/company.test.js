@@ -235,18 +235,18 @@ describe("findAll with parameters", function () {
 /**************test wherebuilder funciton */
 describe("test wherebuilder", function () {
   test("wherebuilder function works with no parameters", function () {
-    const result = Company.whereBuilder({});
+    const result = Company._whereBuilder({});
     expect(result).toEqual({ values: [], where: "" });
   });
 
 
   test("wherebuilder function works with one parameter", function () {
-    const result = Company.whereBuilder({ nameLike: "jonsnow" });
+    const result = Company._whereBuilder({ nameLike: "jonsnow" });
     expect(result).toEqual({ values: ['%jonsnow%'], where: "WHERE name ILIKE $1" });
   });
 
   test("wherebuilder function works with two parameter", function () {
-    const result = Company.whereBuilder({ nameLike: "jonsnow", minEmployees: 5 });
+    const result = Company._whereBuilder({ nameLike: "jonsnow", minEmployees: 5 });
     expect(result).toEqual({ values: ['%jonsnow%', 5], where: "WHERE name ILIKE $1 AND num_employees >= $2" });
   });
 

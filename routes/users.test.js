@@ -245,9 +245,13 @@ describe("GET /users/:username", function () {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
+    try {
+      await request(app)
       .get(`/users/u1`);
-    expect(resp.statusCode).toEqual(401);
+    }
+    catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
   });
 
   test("not found if user not found", async function () {
@@ -317,12 +321,16 @@ describe("PATCH /users/:username", () => {
 
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
+    try {
+      await request(app)
       .patch(`/users/u1`)
       .send({
         firstName: "New",
       });
-    expect(resp.statusCode).toEqual(401);
+    }
+      catch (err){
+        expect(err instanceof UnauthorizedError).toBeTruthy();
+      }
   });
 
   test("not found if no such user", async function () {
@@ -398,9 +406,13 @@ describe("DELETE /users/:username", function () {
 
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
+    try {
+       await request(app)
       .delete(`/users/u1`);
-    expect(resp.statusCode).toEqual(401);
+    }
+    catch (err) {
+        expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
   });
 
   test("not found if user missing", async function () {

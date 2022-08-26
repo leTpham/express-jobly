@@ -48,31 +48,32 @@ function ensureLoggedIn(req, res, next) {
  * If not, raise error
  */
 function ensureAdmin(req, res, next) {
-  const user = res.locals.user;
-  if (!user || user.isAdmin !== true) {
-    throw new UnauthorizedError(err);
-  } else {
-
-    return next();
+  try {
+    const user = res.locals.user;
+    if (!user || user.isAdmin !== true) throw new UnauthorizedError();
+      return next();
+    } catch (err) {
+      return next(err);
+    }
   }
-}
 
 /** Middleware to see if see if user/admin is viewing page */
 
 function ensureUserOrAdmin(req, res, next) {
-  const user = res.locals.user;
-
-  if (!user || (user.isAdmin !== true && user.username !== req.params.username)) {
-    throw new UnauthorizedError(err);
-  } else {
-    return next();
+  try {
+    const user = res.locals.user;
+    if (!user || (user.isAdmin !== true && user.username !== req.params.username))
+      throw new UnauthorizedError(err);
+      return next();
+    } catch (err) {
+      return next();
+    }
   }
-}
 
 
-module.exports = {
-  authenticateJWT,
-  ensureLoggedIn,
-  ensureAdmin,
-  ensureUserOrAdmin
-};
+  module.exports = {
+    authenticateJWT,
+    ensureLoggedIn,
+    ensureAdmin,
+    ensureUserOrAdmin
+  };
