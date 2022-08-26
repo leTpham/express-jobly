@@ -111,5 +111,20 @@ describe("POST /auth/register", function () {
         });
     expect(resp.statusCode).toEqual(400);
   });
+
+  test("bad request if try to pass in isAdmin", async function () {
+    const resp = await request(app)
+        .post("/auth/register")
+        .send({
+          username: "new",
+          firstName: "first",
+          lastName: "last",
+          password: "password",
+          email: "not-an-email",
+          isAdmin: true
+        });
+    expect(resp.statusCode).toEqual(400);
+  });
 });
+
 

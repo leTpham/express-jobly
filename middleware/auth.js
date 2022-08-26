@@ -49,7 +49,7 @@ function ensureLoggedIn(req, res, next) {
  */
 function ensureAdmin(req, res, next) {
   const user = res.locals.user;
-  if (!user || user.isAdmin === false) {
+  if (!user || user.isAdmin !== true) {
     throw new UnauthorizedError(err);
   } else {
 
@@ -61,13 +61,8 @@ function ensureAdmin(req, res, next) {
 
 function ensureUserOrAdmin(req, res, next) {
   const user = res.locals.user;
-  console.log("USER.USERNAME!", user.username);
-  console.log("PARAMS.USERNAME", req.params.username);
 
-  if (!user) {
-    throw new UnauthorizedError(err);
-  }
-  if (user.isAdmin === false && user.username !== req.params.username) {
+  if (!user || (user.isAdmin !== true && user.username !== req.params.username)) {
     throw new UnauthorizedError(err);
   } else {
     return next();
