@@ -2,7 +2,7 @@
 
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const Company = require("./company.js");
+const Job = require("./job.js")
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -21,38 +21,39 @@ describe("create", function () {
   const newJob = {
     title: "newJob",
     salary: 10,
-    equity: 0.9,
-    companyHandle: "newCompany"
+    equity: "0.9",
+    companyHandle: "c1"
   };
 
   test("works", async function () {
     let job = await Job.create(newJob);
-    expect(job).toEqual(newJob);
+    // expect(job).toEqual(newJob);
+
 
     const result = await db.query(
-      `SELECT title, salary, equity, company_handle AS companyHandle
+      `SELECT title, salary, equity, company_handle
            FROM jobs
-           WHERE company_handle = 'newCompany'`);
+           WHERE id = ${job.id}`);
     expect(result.rows).toEqual([
       {
         title: "newJob",
         salary: 10,
-        equity: 0.9,
-        companyHandle: "newCompany"
+        equity: "0.9",
+        company_handle: "c1"
       },
     ]);
   });
 
 
-  test("bad request with dupe", async function () {
-    try {
-      await Company.create(newJob);
-      await Company.create(newJob);
-      throw new Error("fail test, you shouldn't get here");
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-  });
+  // test("bad request with dupe", async function () {
+  //   try {
+  //     await Company.create(newJob);
+  //     await Company.create(newJob);
+  //     throw new Error("fail test, you shouldn't get here");
+  //   } catch (err) {
+  //     expect(err instanceof BadRequestError).toBeTruthy();
+  //   }
+  // });
 });
 
 /************************************** findAll */
@@ -64,19 +65,19 @@ describe("findAll", function () {
       {
         title: "j1",
         salary: 1,
-        equity: 0.1,
+        equity: "0.1",
         companyHandle: "c1"
       },
       {
         title: "j2",
         salary: 2,
-        equity: 0.2,
+        equity: "0.2",
         companyHandle: "c2"
       },
       {
         title: "j3",
         salary: 3,
-        equity: 0.3,
+        equity: "0.3",
         companyHandle: "c3"
       },
     ]);

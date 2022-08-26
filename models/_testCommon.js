@@ -38,6 +38,8 @@ async function commonBeforeAll() {
                ('j2', 2, 0.2, 'c2'),
                ('j3', 3, 0.3, 'c3')
         `)
+
+  
 }
 
 

@@ -34,7 +34,7 @@ describe("create", function () {
       `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'new'`);
-    expect(result.rows).toEqual([
+    expect(result.rows[0]).toEqual([
       {
         handle: "new",
         name: "New",
